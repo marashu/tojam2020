@@ -1,0 +1,55 @@
+playing game <%= @game.id %>
+
+<div class="game-map">
+
+</div>
+<script>
+    $( document ).ready(function(){
+      var player_tile = '';
+      var map = '<%= @game.map%>';
+      map = map.split('n');
+
+      var tableString = '<table style="border: 0px; padding: 0px; margin: 0px; border-spacing: 0px;">';
+
+      var row = 0;
+      var col = 0;
+      map.forEach(function(e){
+          col = 0;
+          tableString += '<tr id="row-' + row + '" style="border: 0px; padding: 0px; margin: 0px;">';
+          rowDetails = e.split('');
+          rowDetails.forEach(function(r){
+              switch(r){
+                  case '1':
+                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-wall" style="height: 50px; width: 50px; background-color: #000000;">&nbsp;</td>';
+                      break;
+                  case 'p':
+                      player_tile = 'cell-' + row + '-' + col;
+                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-open" style="height: 50px; width: 50px; background-color: #FFFFFF;">PLAYER</td>';
+                      break;
+                  case '0':
+                  default:
+                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-open" style="height: 50px; width: 50px; background-color: #FFFFFF;">&nbsp;</td>';
+                      break;
+              }
+          });
+          tableString += '</tr>';
+          row++;
+      });
+      tableString += '</table>';
+
+      $('.game-map').html(tableString);
+      player_tile = $("#" + player_tile);
+
+
+        $('td').click(function(){
+          if($(this).hasClass('game-open'))
+          {
+              if(player_tile != '')
+                player_tile.text('');
+              player_tile = $(this);
+              player_tile.text("PLAYER");
+          }
+          console.log($(this).attr('id'));
+      });
+  });
+</script>

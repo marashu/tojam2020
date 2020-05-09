@@ -14,4 +14,12 @@
 
     </div>
   </div>
+  <%= form_for @game do |f| %>
+  <%= button_tag class: "btn btn-primary btn-labeled pull-right", data:{disable_with: "<i class='fa fa-refresh fa-spin'>
+</i> Saving..."}, title: "Save" do %>
+      <i class="btn-label icon fa fa-check"></i> Save
+  <% end %>
+      <% end %>
+
+
 </div>
