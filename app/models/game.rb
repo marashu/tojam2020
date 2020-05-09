@@ -3,186 +3,236 @@ class Game < ApplicationRecord
   def generate_map
     max_width = 30
     max_height = 30
-    new_map = Array.new(max_height)
-    key = 0
-    new_map.each do |value|
-      new_map[key] = Array.new(max_width)
-      new_map[key][0] = '1'
-      new_map[key][max_width - 1] = '1'
-      key = key + 1
-    end
-    key = 0
-    new_map[0].each do |n|
-      new_map[0][key] = '1'
-      key = key + 1
-    end
-    key = 0
-    new_map[max_height - 1].each do |n|
-      new_map[max_height - 1][key] = '1'
-      key = key + 1
-    end
+    valid_loop = false
 
-    room_count = 0
-    room_count_sm = 0
-    room_count_md = 0
-    room_count_lg = 0
-
-    max_rooms = 10
-    max_rooms_sm = 4
-    max_rooms_md = 4
-    max_rooms_lg = 4
-
-    starting_room_x = 0
-    starting_room_y = 0
-
-    corridor_tiles = {}
-
-    while room_count == 0
-
-      potential_room_x = rand(max_width)
-      potential_room_y = rand(max_height)
-      if potential_room_x - 3 < 0 or potential_room_y - 3 < 0 or potential_room_x + 3 >= max_width or potential_room_y + 3 >= max_height
-        next
+    while !valid_loop
+      puts "NEW ATTEMPT"
+      new_map = Array.new(max_height)
+      key = 0
+      new_map.each do |value|
+        new_map[key] = Array.new(max_width)
+        new_map[key][0] = '1'
+        new_map[key][max_width - 1] = '1'
+        key = key + 1
+      end
+      key = 0
+      new_map[0].each do |n|
+        new_map[0][key] = '1'
+        key = key + 1
+      end
+      key = 0
+      new_map[max_height - 1].each do |n|
+        new_map[max_height - 1][key] = '1'
+        key = key + 1
       end
 
-      valid = true
-      for x in (potential_room_x - 2)..(potential_room_x + 2)
-        for y in (potential_room_y - 2)..(potential_room_y + 2)
-          if new_map[y][x] == 1 or new_map[y][x] == 2
-            valid = false
+      room_count = 0
+      room_count_sm = 0
+      room_count_md = 0
+      room_count_lg = 0
+
+      max_rooms = 10
+      max_rooms_sm = 4
+      max_rooms_md = 4
+      max_rooms_lg = 4
+
+      starting_room_x = 0
+      starting_room_y = 0
+
+      corridor_tiles = {}
+      attempts = 0
+
+
+      while room_count == 0
+
+        potential_room_x = rand(max_width)
+        potential_room_y = rand(max_height)
+        if potential_room_x - 3 < 0 or potential_room_y - 3 < 0 or potential_room_x + 3 >= max_width or potential_room_y + 3 >= max_height
+          next
+        end
+
+        valid = true
+        for x in (potential_room_x - 2)..(potential_room_x + 2)
+          for y in (potential_room_y - 2)..(potential_room_y + 2)
+            if new_map[y][x] == 1 or new_map[y][x] == 2
+              valid = false
+              break
+            end
+          end
+          unless valid
             break
           end
         end
         unless valid
-          break
+          next
         end
-      end
-      unless valid
-        next
-      end
 
-      for x in (potential_room_x - 3)..(potential_room_x + 3)
-        for y in (potential_room_y - 3)..(potential_room_y + 3)
-          if x == potential_room_x - 3 or x == potential_room_x + 3 or y == potential_room_y - 3 or y == potential_room_y + 3
-            new_map[y][x] = 1
-          else
-            new_map[y][x] = 2
+        for x in (potential_room_x - 3)..(potential_room_x + 3)
+          for y in (potential_room_y - 3)..(potential_room_y + 3)
+            if x == potential_room_x - 3 or x == potential_room_x + 3 or y == potential_room_y - 3 or y == potential_room_y + 3
+              new_map[y][x] = 1
+            else
+              new_map[y][x] = 2
+            end
           end
         end
-      end
-      if room_count_lg == 0
-        new_map[potential_room_y][potential_room_x] = 'p'
-        starting_room_x = potential_room_x
-        starting_room_y = potential_room_y
-      end
+        if room_count_lg == 0
+          new_map[potential_room_y][potential_room_x] = 'p'
+          starting_room_x = potential_room_x
+          starting_room_y = potential_room_y
+        end
 
-      room_count += 1
-      room_count_lg += 1
-    end
-
-    #first hallway
-    current_position_x = starting_room_x
-    current_position_y = starting_room_y
-    while corridor_tiles.empty?
-
-      #wander the room until you reach a wall
-
-      direction = rand(4)
-      case direction
-        when 0
-          current_position_x += 1
-          if current_position_x >= max_width - 2
-            current_position_x -= 6
-            direction += 2
-          end
-        when 1
-          current_position_y += 1
-          if current_position_y >= max_height - 2
-            current_position_y -= 6
-            direction += 2
-          end
-        when 2
-          current_position_x -= 1
-          if current_position_x <= 1
-            current_position_x += 6
-            direction -= 2
-          end
-        when 3
-          current_position_y -= 1
-          if current_position_y <= 1
-            current_position_y += 6
-            direction -= 2
-          end
+        room_count += 1
+        room_count_lg += 1
       end
 
-      unless new_map[current_position_y][current_position_x] == 1
-        next
-      end
+      #first hallway
+      current_position_x = starting_room_x
+      current_position_y = starting_room_y
+      while corridor_tiles.empty?
 
-      new_map[current_position_y][current_position_x] = 2
-      case direction
-        when 0
-          current_position_x += 1
-        when 1
-          current_position_y += 1
-        when 2
-          current_position_x -= 1
-        when 3
-          current_position_y -= 1
-      end
-      new_map[current_position_y][current_position_x] = 0
-      corridor_tiles << {'x' => current_position_x, 'y' => current_position_y}
-      direction = rand(4)
+        #wander the room until you reach a wall
 
-      while corridor_tiles.length < 5
-
-        puts "CORRIDOR LENGTH: " + corridor_tiles.length.to_s
+        direction = rand(4)
         case direction
           when 0
             current_position_x += 1
-            if new_map[current_position_y][current_position_x] == 2
-              current_position_x -= 1
-              direction = rand(4)
-              next
-            elsif new_map[current_position_y][current_position_x] == 1
-              current_position_x -= 1
-              direction = (direction + 2) % 4
+            if current_position_x >= max_width - 2
+              current_position_x -= 6
+              direction += 2
             end
           when 1
             current_position_y += 1
-            if new_map[current_position_y][current_position_x] == 2
-              current_position_y -= 1
-              direction = rand(4)
-              next
-            elsif new_map[current_position_y][current_position_x] == 1
-              current_position_y -= 1
-              direction = (direction + 2) % 4
+            if current_position_y >= max_height - 2
+              current_position_y -= 6
+              direction += 2
             end
           when 2
             current_position_x -= 1
-            if new_map[current_position_y][current_position_x] == 2
-              current_position_x += 1
-              direction = rand(4)
-              next
-            elsif new_map[current_position_y][current_position_x] == 1
-              current_position_x += 1
-              direction = (direction + 2) % 4
+            if current_position_x <= 1
+              current_position_x += 6
+              direction -= 2
             end
           when 3
             current_position_y -= 1
-            if new_map[current_position_y][current_position_x] == 2
-              current_position_y += 1
-              direction = rand(4)
-              next
-            elsif new_map[current_position_y][current_position_x] == 1
-              current_position_y += 1
-              direction = (direction + 2) % 4
+            if current_position_y <= 1
+              current_position_y += 6
+              direction -= 2
             end
         end
 
-        unless new_map[current_position_y][current_position_x] == 0
-          new_map[current_position_y][current_position_x]
-          corridor_tiles << {'x' => current_position_x, 'y' => current_position_y}
+        unless new_map[current_position_y][current_position_x] == 1
+          next
+        end
+
+        potential_door_x = current_position_x
+        potential_door_y = current_position_y
+        new_map[current_position_y][current_position_x] = 2
+        case direction
+          when 0
+            current_position_x += 1
+          when 1
+            current_position_y += 1
+          when 2
+            current_position_x -= 1
+          when 3
+            current_position_y -= 1
+        end
+        new_map[current_position_y][current_position_x] = 0
+        corridor_tiles = {0 => {'x' => current_position_x, 'y' => current_position_y}}
+        direction = rand(4)
+
+        while corridor_tiles.length < 5 and attempts < 50
+
+          puts "CORRIDOR LENGTH: " + corridor_tiles.length.to_s
+          case direction
+            when 0
+              current_position_x += 1
+              if current_position_x >= max_width
+                current_position_x -= 4
+                direction = rand(4)
+                attempts += 1
+                next
+              end
+              if new_map[current_position_y][current_position_x] == 2
+                current_position_x -= 1
+                direction = rand(4)
+                attempts += 1
+                next
+              elsif new_map[current_position_y][current_position_x] == 1
+                current_position_x -= 1
+                direction = (direction + 2) % 4
+                attempts += 1
+              end
+            when 1
+              current_position_y += 1
+              if current_position_y >= max_height
+                current_position_y -= 4
+                direction = rand(4)
+                attempts += 1
+                next
+              end
+              if new_map[current_position_y][current_position_x] == 2
+                current_position_y -= 1
+                direction = rand(4)
+                attempts += 1
+                next
+              elsif new_map[current_position_y][current_position_x] == 1
+                current_position_y -= 1
+                direction = (direction + 2) % 4
+                attempts += 1
+              end
+            when 2
+              current_position_x -= 1
+              if current_position_x < 0
+                current_position_x += 4
+                direction = rand(4)
+                attempts += 1
+                next
+              end
+              if new_map[current_position_y][current_position_x] == 2
+                current_position_x += 1
+                direction = rand(4)
+                attempts += 1
+                next
+              elsif new_map[current_position_y][current_position_x] == 1
+                current_position_x += 1
+                direction = (direction + 2) % 4
+                attempts += 1
+              end
+            when 3
+              current_position_y -= 1
+              if current_position_y < 0
+                current_position_y += 4
+                direction = rand(4)
+                attempts += 1
+                next
+              end
+              if new_map[current_position_y][current_position_x] == 2
+                current_position_y += 1
+                direction = rand(4)
+                attempts += 1
+                next
+              elsif new_map[current_position_y][current_position_x] == 1
+                current_position_y += 1
+                direction = (direction + 2) % 4
+                attempts += 1
+              end
+          end
+
+
+          if new_map[current_position_y][current_position_x] != 0
+            puts "ADDING TO MAP"
+            new_map[current_position_y][current_position_x]
+            corridor_tiles = corridor_tiles.merge({corridor_tiles.length => {'x' => current_position_x, 'y' => current_position_y}})
+          else
+            attempts += 1
+          end
+        end
+        if attempts >= 50
+          break
+        else
+          valid_loop = true
         end
       end
 
@@ -213,37 +263,37 @@ class Game < ApplicationRecord
         while direction < 8
           case direction % 4
             when 0
-              if new_map[values['y']][values['x'] + 1].nil?
+              if new_map[random_value['y']][random_value['x'] + 1].nil?
                 valid = true
-                potential_room_x = values['x'] + 1
-                potential_room_y = values['y']
+                potential_room_x = random_value['x'] + 1
+                potential_room_y = random_value['y']
                 break
               else
                 direction += 1
               end
             when 1
-              if new_map[values['y'] + 1][values['x']].nil?
+              if new_map[random_value['y'] + 1][random_value['x']].nil?
                 valid = true
-                potential_room_x = values['x']
-                potential_room_y = values['y'] + 1
+                potential_room_x = random_value['x']
+                potential_room_y = random_value['y'] + 1
                 break
               else
                 direction += 1
               end
             when 2
-              if new_map[values['y']][values['x'] - 1].nil?
+              if new_map[random_value['y']][random_value['x'] - 1].nil?
                 valid = true
-                potential_room_x = values['x'] - 1
-                potential_room_y = values['y']
+                potential_room_x = random_value['x'] - 1
+                potential_room_y = random_value['y']
                 break
               else
                 direction += 1
               end
             when 3
-              if new_map[values['y'] - 1][values['x']].nil?
+              if new_map[random_value['y'] - 1][random_value['x']].nil?
                 valid = true
-                potential_room_x = values['x']
-                potential_room_y = values['y'] - 1
+                potential_room_x = random_value['x']
+                potential_room_y = random_value['y'] - 1
                 break
               else
                 direction += 1
@@ -259,6 +309,7 @@ class Game < ApplicationRecord
 
         case current_room_size
           when 0
+            puts "SMALL ROOM"
 
 
             case direction % 4
@@ -297,8 +348,10 @@ class Game < ApplicationRecord
 
             room_count += 1
             room_count_sm += 1
-            room_probability = 100
+            room_probability = room_count * 10
           when 1
+            puts "MEDIUM ROOM"
+
             case direction % 4
               when 0
                 potential_room_x += 2
@@ -346,8 +399,10 @@ class Game < ApplicationRecord
 
             room_count += 1
             room_count_md += 1
-            room_probability = 100
+            room_probability = room_count * 10
           when 2
+            puts "LARGE ROOM"
+
             case direction % 4
               when 0
                 potential_room_x += 3
@@ -395,11 +450,16 @@ class Game < ApplicationRecord
 
             room_count += 1
             room_count_lg += 1
-            room_probability = 100
+            room_probability = room_count * 10
         end
 
       # add a corridor
       else
+        if corridor_tiles.length > 150
+          room_probability = 100
+          next
+        end
+        puts "CORRIDORS: " + corridor_tiles.length.to_s
         values = corridor_tiles.values
         random_value = values[rand(values.size)]
         direction = rand(4)
@@ -407,37 +467,37 @@ class Game < ApplicationRecord
         while direction < 8
           case direction % 4
             when 0
-              if new_map[values['y']][values['x'] + 1].nil?
+              if new_map[random_value['y']][random_value['x'] + 1].nil?
                 valid = true
-                potential_room_x = values['x'] + 1
-                potential_room_y = values['y']
+                potential_room_x = random_value['x'] + 1
+                potential_room_y = random_value['y']
                 break
               else
                 direction += 1
               end
             when 1
-              if new_map[values['y'] + 1][values['x']].nil?
+              if new_map[random_value['y'] + 1][random_value['x']].nil?
                 valid = true
-                potential_room_x = values['x']
-                potential_room_y = values['y'] + 1
+                potential_room_x = random_value['x']
+                potential_room_y = random_value['y'] + 1
                 break
               else
                 direction += 1
               end
             when 2
-              if new_map[values['y']][values['x'] - 1].nil?
+              if new_map[random_value['y']][random_value['x'] - 1].nil?
                 valid = true
-                potential_room_x = values['x'] - 1
-                potential_room_y = values['y']
+                potential_room_x = random_value['x'] - 1
+                potential_room_y = random_value['y']
                 break
               else
                 direction += 1
               end
             when 3
-              if new_map[values['y'] - 1][values['x']].nil?
+              if new_map[random_value['y'] - 1][random_value['x']].nil?
                 valid = true
-                potential_room_x = values['x']
-                potential_room_y = values['y'] - 1
+                potential_room_x = random_value['x']
+                potential_room_y = random_value['y'] - 1
                 break
               else
                 direction += 1
@@ -457,6 +517,12 @@ class Game < ApplicationRecord
           case direction
             when 0
               current_position_x += 1
+              if current_position_x >= max_width
+                current_position_x -= 1
+                direction = rand(4)
+                attempts += 1
+                next
+              end
               if new_map[current_position_y][current_position_x] == 2
                 current_position_x -= 1
                 direction = rand(4)
@@ -467,6 +533,12 @@ class Game < ApplicationRecord
               end
             when 1
               current_position_y += 1
+              if current_position_y >= max_height
+                current_position_y -= 1
+                direction = rand(4)
+                attempts += 1
+                next
+              end
               if new_map[current_position_y][current_position_x] == 2
                 current_position_y -= 1
                 direction = rand(4)
@@ -477,6 +549,12 @@ class Game < ApplicationRecord
               end
             when 2
               current_position_x -= 1
+              if current_position_x < 0
+                current_position_x += 1
+                direction = rand(4)
+                attempts += 1
+                next
+              end
               if new_map[current_position_y][current_position_x] == 2
                 current_position_x += 1
                 direction = rand(4)
@@ -487,6 +565,12 @@ class Game < ApplicationRecord
               end
             when 3
               current_position_y -= 1
+              if current_position_y < 0
+                current_position_y += 1
+                direction = rand(4)
+                attempts += 1
+                next
+              end
               if new_map[current_position_y][current_position_x] == 2
                 current_position_y += 1
                 direction = rand(4)
@@ -502,8 +586,8 @@ class Game < ApplicationRecord
           else
             attempts += 1
             corridors_added += 1
-            new_map[current_position_y][current_position_x]
-            corridor_tiles << {'x' => current_position_x, 'y' => current_position_y}
+            new_map[current_position_y][current_position_x] = 0
+            corridor_tiles = corridor_tiles.merge({corridor_tiles.length => {'x' => current_position_x, 'y' => current_position_y}})
           end
         end
         room_probability = 100
