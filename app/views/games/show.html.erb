@@ -5,6 +5,11 @@ playing game <%= @game.id %>
 </div>
 <script>
     $( document ).ready(function(){
+        <% if @player.avatar == 0 %>
+          <% image_string = '/assets/Pixel_Jemma.png' %>
+        <% else %>
+          <% image_string = '/assets/Pixel_Jemma.png' %>
+        <% end %>
       var player_tile = '';
       var map = '<%= @game.map%>';
       map = map.split('n');
@@ -24,7 +29,7 @@ playing game <%= @game.id %>
                       break;
                   case 'p':
                       player_tile = 'cell-' + row + '-' + col;
-                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-open game-open-1" style="height: 50px; width: 50px; background-color: #FFFFFF;">P</td>';
+                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-open game-open-1" style="height: 50px; width: 50px; background-color: #FFFFFF;"><%= image_tag(image_string) %></td>';
                       break;
                   case '1':
                       //tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-open game-open-' + r + '" style="height: 50px; width: 50px; background-color: #FFFFFF; background-image: url(\'/assets/1_center_blank.png\')">&nbsp;</td>';
@@ -60,9 +65,8 @@ playing game <%= @game.id %>
               if(player_tile != '')
                 player_tile.text('');
               player_tile = $(this);
-              player_tile.text("P");
+              player_tile.html('<%= image_tag(image_string) %>');
           }
-          console.log($(this).attr('id'));
       });
   });
 </script>

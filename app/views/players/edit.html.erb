@@ -1,0 +1,29 @@
+<%= page_header('Select a character') %>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-dark panel-success">
+
+      <div class="panel-heading entity-view-header">
+        <span class="panel-title entity-view-title">
+          <i class="panel-title-icon fa fa-cutlery"></i>
+          <span id="view_title_text" class="text-bg">Choose a Character</span>
+        </span>
+      </div>
+
+
+    </div>
+  </div>
+  <%= form_for @player do |f| %>
+      <input type="radio" id="jemma" name="avatar" value="jemma" checked>
+      <label for="jemma">Jemma</label><br>
+      <input type="radio" id="diane" name="avatar" value="diane">
+      <label for="diane">Diane</label><br>
+      <%= button_tag class: "btn btn-primary btn-labeled pull-right", data:{disable_with: "<i class='fa fa-refresh fa-spin'>
+</i> Loading game..."}, title: "Begin" do %>
+          <i class="btn-label icon fa fa-check"></i> Begin
+      <% end %>
+  <% end %>
+
+
+</div>

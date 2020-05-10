@@ -10,12 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200508145513) do
+ActiveRecord::Schema.define(version: 20200510013306) do
 
   create_table "games", force: :cascade do |t|
     t.text     "map"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "players", force: :cascade do |t|
+    t.integer  "avatar"
+    t.integer  "game_id"
+    t.boolean  "host"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id"], name: "index_players_on_game_id"
   end
 
 end

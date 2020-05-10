@@ -1,0 +1,22 @@
+<%= page_header('Ready?') %>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-dark panel-success">
+
+      <div class="panel-heading entity-view-header">
+        <span class="panel-title entity-view-title">
+          If you are disconnected, click on Join Game to resume the game, and use the game id <b><%= @player.id %></b><br>
+          Tell your partner to join a game.  Their game id is <b><%= @other_player.id %></b>
+        </span>
+      </div>
+
+
+    </div>
+  </div>
+  <%= link_to games_path(@player.game, player: @player), class: "btn btn-normal btn-grey btn-labeled pull-right cancel" do %>
+  BEGIN
+      <% end %>
+
+
+</div>

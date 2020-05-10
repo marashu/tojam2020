@@ -16,9 +16,12 @@
   </div>
   <%= form_for @game do |f| %>
   <%= button_tag class: "btn btn-primary btn-labeled pull-right", data:{disable_with: "<i class='fa fa-refresh fa-spin'>
-</i> Saving..."}, title: "Save" do %>
-      <i class="btn-label icon fa fa-check"></i> Save
+</i> Hosting..."}, title: "Host" do %>
+      <i class="btn-label icon fa fa-check"></i> Host Game
   <% end %>
+      <%= link_to join_games_path, class: "btn btn-normal btn-grey btn-labeled pull-right cancel" do %>
+          <i class="btn-label icon fa fa-pencil"></i> Join Game
+      <% end %>
       <% end %>
 
 

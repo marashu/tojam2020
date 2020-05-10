@@ -1,4 +1,5 @@
 class Game < ApplicationRecord
+  has_many :players
 
   def generate_map
     max_width = 30
@@ -31,9 +32,9 @@ class Game < ApplicationRecord
       room_count_md = 0
       room_count_lg = 0
 
-      max_rooms = 10
+      max_rooms = 15
       max_rooms_sm = 0
-      max_rooms_md = 9
+      max_rooms_md = 14
       max_rooms_lg = 1
 
       starting_room_x = 0
@@ -365,7 +366,7 @@ puts "REMOVED"
                 end
             end
 
-            byebug
+
             case new_map[new_door['y']][new_door['x']]
               when 2
                 new_map[new_door['y']][new_door['x']] = 1
