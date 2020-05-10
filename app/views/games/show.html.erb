@@ -33,17 +33,17 @@ playing game <%= @game.id %>
           rowDetails.forEach(function(r){
               switch(r){
                   case '0':
-                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="hidden-cell-' + row + '-' + col++ + '" data-class="game-wall" class="game-wall" style="height: 50px; width: 50px; background-color: #000000;">&nbsp;</td>';
+                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="hidden-cell-' + row + '-' + col++ + '" data-class="game-wall" class="game-wall" style="height: 75px; width: 75px; background-color: #000000;">&nbsp;</td>';
                       break;
                   case 'p':
                       player_tile = 'cell-' + row + '-' + col;
-                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="hidden-cell-' + row + '-' + col++ + '" data-class="game-open game-open-1" class="game-open game-open-1" style="height: 50px; width: 50px; background-color: #FFFFFF;"><%= image_tag(image_string) %></td>';
+                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="hidden-cell-' + row + '-' + col++ + '" data-class="game-open game-open-1" class="game-open game-open-1" style="height: 75px; width: 75px; background-color: #FFFFFF;"><%= image_tag(image_string) %></td>';
                       break;
                   case '1':
                       //tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-open game-open-' + r + '" style="height: 50px; width: 50px; background-color: #FFFFFF; background-image: url(\'/assets/1_center_blank.png\')">&nbsp;</td>';
 
                   default:
-                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="hidden-cell-' + row + '-' + col++ + '" data-class="game-open game-open-' + r + '" class="game-open game-open-' + r + '" style="height: 50px; width: 50px; background-color: #FFFFFF;">&nbsp;</td>';
+                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="hidden-cell-' + row + '-' + col++ + '" data-class="game-open game-open-' + r + '" class="game-open game-open-' + r + '" style="height: 75px; width: 75px; background-color: #FFFFFF;">&nbsp;</td>';
                       break;
               }
           });
@@ -67,6 +67,7 @@ playing game <%= @game.id %>
       $('.game-open-9').css('background-image', 'url("/assets/9_SouthWest_corner.png")');
       $('.game-open').css('background-repeat', 'no-repeat');
       $('.game-open').css('background-size', '100% 100%');
+      $('.game-wall').css('background-color', '#000000');
 
 
         $('td').click(movePlayer);
@@ -92,6 +93,7 @@ playing game <%= @game.id %>
           $('.game-open-9').css('background-image', 'url("/assets/9_SouthWest_corner.png")');
           $('.game-open').css('background-repeat', 'no-repeat');
           $('.game-open').css('background-size', '100% 100%');
+          $('.game-wall').css('background-color', '#000000');
           $('td').click(movePlayer);
       }
   }
@@ -102,24 +104,24 @@ playing game <%= @game.id %>
         playerY = parseInt(playerY);
         var offsetX = 0;
         var offsetY = 0;
-        if(playerX - 3 < 0)
-            offsetX = Math.abs(playerX - 3);
-        if(playerY - 3 < 0)
-            offsetY = Math.abs(playerY - 3);
+        if(playerX - 5 < 0)
+            offsetX = Math.abs(playerX - 5);
+        if(playerY - 6 < 0)
+            offsetY = Math.abs(playerY - 6);
 
-        if(playerX + 3 >= MAXWIDTH)
-            offsetX = MAXWIDTH - (playerX + 3);
-        if(playerY + 3 >= MAXHEIGHT)
-            offsetY = MAXHEIGHT - (playerY + 3);
+        if(playerX + 5 >= MAXWIDTH)
+            offsetX = MAXWIDTH - (playerX + 5);
+        if(playerY + 6 >= MAXHEIGHT)
+            offsetY = MAXHEIGHT - (playerY + 6);
         var tableString = '<table class="game-table" style="border: 0px; padding: 0px; margin: 0px; border-spacing: 0px;">';
 
-        for (y = (playerY + offsetY - 3); y <= (playerY + offsetY + 3); y++)
+        for (y = (playerY + offsetY - 6); y <= (playerY + offsetY + 6); y++)
         {
             tableString += '<tr id="row-' + y + '" style="border: 0px; padding: 0px; margin: 0px;">';
 
-            for (x = (playerX + offsetX - 3); x <= (playerX + offsetX + 3); x++)
+            for (x = (playerX + offsetX - 5); x <= (playerX + offsetX + 5); x++)
             {
-                tableString += '<td data-x="' + x + '" data-y="' + y + '" id="cell-' + y + '-' + x + '" class="' + $('#hidden-cell-' + y + '-' + x).attr('data-class') +'" style="height: 50px; width: 50px; background-color: #FFFFFF;">&nbsp;</td>';
+                tableString += '<td data-x="' + x + '" data-y="' + y + '" id="cell-' + y + '-' + x + '" class="' + $('#hidden-cell-' + y + '-' + x).attr('data-class') +'" style="height: 75px; width: 75px; background-color: #FFFFFF;">&nbsp;</td>';
             }
             tableString += '</tr>';
         }
@@ -154,38 +156,38 @@ playing game <%= @game.id %>
 
         var row = 0;
         var col = 0;
-        if(playerPosX - 3 < 0)
-            offsetX = Math.abs(playerPosX - 3);
-        if(playerPosY - 3 < 0)
-            offsetY = Math.abs(playerPosY - 3);
+        if(playerPosX - 5 < 0)
+            offsetX = Math.abs(playerPosX - 5);
+        if(playerPosY - 6 < 0)
+            offsetY = Math.abs(playerPosY - 6);
 
-        if(playerPosX + 3 >= mapArray[0].length)
-            offsetX = mapArray[0].length - (playerPosX + 3);
-        if(playerPosY + 3 >= mapArray.length)
-            offsetY = mapArray.length - (playerPosY + 3);
+        if(playerPosX + 5 >= mapArray[0].length)
+            offsetX = mapArray[0].length - (playerPosX + 5);
+        if(playerPosY + 6 >= mapArray.length)
+            offsetY = mapArray.length - (playerPosY + 6);
         var tableString = '<table class="game-table" style="border: 0px; padding: 0px; margin: 0px; border-spacing: 0px;">';
 
         mapArray.forEach(function(e){
             col = 0;
-            if (row >= (playerPosX + offsetX - 3) && row <= (playerPosX + offsetX + 3))
+            if (row >= (playerPosX + offsetX - 5) && row <= (playerPosX + offsetX + 5))
             {
                 tableString += '<tr id="row-' + row + '" style="border: 0px; padding: 0px; margin: 0px;">';
                 rowDetails = e.split('');
                 rowDetails.forEach(function(r){
-                    if(col >= (playerPosY + offsetY - 3) && col <= (playerPosY + offsetY + 3))
+                    if(col >= (playerPosY + offsetY - 6) && col <= (playerPosY + offsetY + 6))
                     {
                         switch(r){
                             case '0':
-                                tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col + '" class="game-wall" style="height: 50px; width: 50px; background-color: #000000;">&nbsp;</td>';
+                                tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col + '" class="game-wall" style="height: 75px; width: 75px; background-color: #000000;">&nbsp;</td>';
                                 break;
                             case 'p':
-                                tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col + '" class="game-open game-open-1" style="height: 50px; width: 50px; background-color: #FFFFFF;"><%= image_tag(image_string) %></td>';
+                                tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col + '" class="game-open game-open-1" style="height: 75px; width: 75px; background-color: #FFFFFF;"><%= image_tag(image_string) %></td>';
                                 break;
                             case '1':
                             //tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-open game-open-' + r + '" style="height: 50px; width: 50px; background-color: #FFFFFF; background-image: url(\'/assets/1_center_blank.png\')">&nbsp;</td>';
 
                             default:
-                                tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col + '" class="game-open game-open-' + r + '" style="height: 50px; width: 50px; background-color: #FFFFFF;">&nbsp;</td>';
+                                tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col + '" class="game-open game-open-' + r + '" style="height: 75px; width: 75px; background-color: #FFFFFF;">&nbsp;</td>';
                                 break;
                         }
                     }
