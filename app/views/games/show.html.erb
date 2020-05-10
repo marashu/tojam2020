@@ -3,7 +3,13 @@ playing game <%= @game.id %>
 <div class="game-map">
 
 </div>
+<div class="game-map-hidden">
+
+</div>
 <script>
+  var MAXWIDTH;
+  var MAXHEIGHT;
+  var player_tile = '';
     $( document ).ready(function(){
         <% if @player.avatar == 0 %>
           <% image_string = '/assets/Pixel_Jemma.png' %>
@@ -13,8 +19,10 @@ playing game <%= @game.id %>
       var player_tile = '';
       var map = '<%= @game.map%>';
       map = map.split('n');
+      MAXWIDTH = map[0].length;
+      MAXHEIGHT = map.length;
 
-      var tableString = '<table style="border: 0px; padding: 0px; margin: 0px; border-spacing: 0px;">';
+      var tableString = '<table class="game-table-hidden" style="border: 0px; padding: 0px; margin: 0px; border-spacing: 0px;">';
 
       var row = 0;
       var col = 0;
@@ -25,17 +33,17 @@ playing game <%= @game.id %>
           rowDetails.forEach(function(r){
               switch(r){
                   case '0':
-                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-wall" style="height: 50px; width: 50px; background-color: #000000;">&nbsp;</td>';
+                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="hidden-cell-' + row + '-' + col++ + '" data-class="game-wall" class="game-wall" style="height: 50px; width: 50px; background-color: #000000;">&nbsp;</td>';
                       break;
                   case 'p':
                       player_tile = 'cell-' + row + '-' + col;
-                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-open game-open-1" style="height: 50px; width: 50px; background-color: #FFFFFF;"><%= image_tag(image_string) %></td>';
+                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="hidden-cell-' + row + '-' + col++ + '" data-class="game-open game-open-1" class="game-open game-open-1" style="height: 50px; width: 50px; background-color: #FFFFFF;"><%= image_tag(image_string) %></td>';
                       break;
                   case '1':
                       //tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-open game-open-' + r + '" style="height: 50px; width: 50px; background-color: #FFFFFF; background-image: url(\'/assets/1_center_blank.png\')">&nbsp;</td>';
 
                   default:
-                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-open game-open-' + r + '" style="height: 50px; width: 50px; background-color: #FFFFFF;">&nbsp;</td>';
+                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="hidden-cell-' + row + '-' + col++ + '" data-class="game-open game-open-' + r + '" class="game-open game-open-' + r + '" style="height: 50px; width: 50px; background-color: #FFFFFF;">&nbsp;</td>';
                       break;
               }
           });
@@ -44,7 +52,9 @@ playing game <%= @game.id %>
       });
       tableString += '</table>';
 
-      $('.game-map').html(tableString);
+      $('.game-map-hidden').html(tableString);
+      $('.game-table-hidden').hide();
+      $('.game-map').html( generateVisibleMap(map))
       player_tile = $("#" + player_tile);
       $('.game-open-1').css('background-image', 'url("/assets/1_center_blank.png")');
       $('.game-open-2').css('background-image', 'url("/assets/2_North_wall.png")');
@@ -59,14 +69,136 @@ playing game <%= @game.id %>
       $('.game-open').css('background-size', '100% 100%');
 
 
-        $('td').click(function(){
-          if($(this).hasClass('game-open'))
-          {
-              if(player_tile != '')
-                player_tile.text('');
-              player_tile = $(this);
-              player_tile.html('<%= image_tag(image_string) %>');
-          }
-      });
+        $('td').click(movePlayer);
   });
+  var movePlayer = function(){
+      if($(this).hasClass('game-open'))
+      {
+          if(player_tile != '')
+              player_tile.text('');
+          id = $(this).attr('id');
+          $('.game-map').html( generateVisibleMapWithXY($(this).attr('data-x'), $(this).attr('data-y')));
+
+          player_tile = $('#' + id);
+          player_tile.html('<%= image_tag(image_string) %>');
+          $('.game-open-1').css('background-image', 'url("/assets/1_center_blank.png")');
+          $('.game-open-2').css('background-image', 'url("/assets/2_North_wall.png")');
+          $('.game-open-3').css('background-image', 'url("/assets/3_East_wall.png")');
+          $('.game-open-4').css('background-image', 'url("/assets/4_South_wall.png")');
+          $('.game-open-5').css('background-image', 'url("/assets/5_West_wall.png")');
+          $('.game-open-6').css('background-image', 'url("/assets/6_NorthWest_corner.png")');
+          $('.game-open-7').css('background-image', 'url("/assets/7_NorthEast_corner.png")');
+          $('.game-open-8').css('background-image', 'url("/assets/8_SouthEast_corner.png")');
+          $('.game-open-9').css('background-image', 'url("/assets/9_SouthWest_corner.png")');
+          $('.game-open').css('background-repeat', 'no-repeat');
+          $('.game-open').css('background-size', '100% 100%');
+          $('td').click(movePlayer);
+      }
+  }
+
+    function generateVisibleMapWithXY(playerX, playerY)
+    {
+        playerX = parseInt(playerX);
+        playerY = parseInt(playerY);
+        var offsetX = 0;
+        var offsetY = 0;
+        if(playerX - 3 < 0)
+            offsetX = Math.abs(playerX - 3);
+        if(playerY - 3 < 0)
+            offsetY = Math.abs(playerY - 3);
+
+        if(playerX + 3 >= MAXWIDTH)
+            offsetX = MAXWIDTH - (playerX + 3);
+        if(playerY + 3 >= MAXHEIGHT)
+            offsetY = MAXHEIGHT - (playerY + 3);
+        var tableString = '<table class="game-table" style="border: 0px; padding: 0px; margin: 0px; border-spacing: 0px;">';
+
+        for (y = (playerY + offsetY - 3); y <= (playerY + offsetY + 3); y++)
+        {
+            tableString += '<tr id="row-' + y + '" style="border: 0px; padding: 0px; margin: 0px;">';
+
+            for (x = (playerX + offsetX - 3); x <= (playerX + offsetX + 3); x++)
+            {
+                tableString += '<td data-x="' + x + '" data-y="' + y + '" id="cell-' + y + '-' + x + '" class="' + $('#hidden-cell-' + y + '-' + x).attr('data-class') +'" style="height: 50px; width: 50px; background-color: #FFFFFF;">&nbsp;</td>';
+            }
+            tableString += '</tr>';
+        }
+        tableString += '</table>'
+        return tableString;
+    }
+    function generateVisibleMap(mapArray)
+    {
+        var playerPosX = 0;
+        var playerPosY = 0;
+        var offsetX = 0;
+        var offsetY = 0;
+        var row = 0;
+        var col = 0;
+        mapArray.forEach(function(e) {
+            col = 0;
+            rowDetails = e.split('');
+            rowDetails.forEach(function(r){
+                if (r == 'p')
+                {
+                    playerPosX = row;
+                    playerPosY = col;
+                }
+                col++;
+                if(playerPosX != 0 && playerPosY != 0)
+                    return false;
+            });
+            row++;
+            if(playerPosX != 0 && playerPosY != 0)
+                return false;
+        });
+
+        var row = 0;
+        var col = 0;
+        if(playerPosX - 3 < 0)
+            offsetX = Math.abs(playerPosX - 3);
+        if(playerPosY - 3 < 0)
+            offsetY = Math.abs(playerPosY - 3);
+
+        if(playerPosX + 3 >= mapArray[0].length)
+            offsetX = mapArray[0].length - (playerPosX + 3);
+        if(playerPosY + 3 >= mapArray.length)
+            offsetY = mapArray.length - (playerPosY + 3);
+        var tableString = '<table class="game-table" style="border: 0px; padding: 0px; margin: 0px; border-spacing: 0px;">';
+
+        mapArray.forEach(function(e){
+            col = 0;
+            if (row >= (playerPosX + offsetX - 3) && row <= (playerPosX + offsetX + 3))
+            {
+                tableString += '<tr id="row-' + row + '" style="border: 0px; padding: 0px; margin: 0px;">';
+                rowDetails = e.split('');
+                rowDetails.forEach(function(r){
+                    if(col >= (playerPosY + offsetY - 3) && col <= (playerPosY + offsetY + 3))
+                    {
+                        switch(r){
+                            case '0':
+                                tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col + '" class="game-wall" style="height: 50px; width: 50px; background-color: #000000;">&nbsp;</td>';
+                                break;
+                            case 'p':
+                                tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col + '" class="game-open game-open-1" style="height: 50px; width: 50px; background-color: #FFFFFF;"><%= image_tag(image_string) %></td>';
+                                break;
+                            case '1':
+                            //tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-open game-open-' + r + '" style="height: 50px; width: 50px; background-color: #FFFFFF; background-image: url(\'/assets/1_center_blank.png\')">&nbsp;</td>';
+
+                            default:
+                                tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col + '" class="game-open game-open-' + r + '" style="height: 50px; width: 50px; background-color: #FFFFFF;">&nbsp;</td>';
+                                break;
+                        }
+                    }
+
+                    col++;
+                });
+                tableString += '</tr>';
+            }
+
+            row++;
+        });
+        tableString += '</table>';
+        return tableString;
+
+    }
 </script>
