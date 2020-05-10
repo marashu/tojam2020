@@ -19,16 +19,18 @@ playing game <%= @game.id %>
           rowDetails = e.split('');
           rowDetails.forEach(function(r){
               switch(r){
-                  case '1':
+                  case '0':
                       tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-wall" style="height: 50px; width: 50px; background-color: #000000;">&nbsp;</td>';
                       break;
                   case 'p':
                       player_tile = 'cell-' + row + '-' + col;
-                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-open" style="height: 50px; width: 50px; background-color: #FFFFFF;">PLAYER</td>';
+                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-open game-open-1" style="height: 50px; width: 50px; background-color: #FFFFFF;">P</td>';
                       break;
-                  case '0':
+                  case '1':
+                      //tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-open game-open-' + r + '" style="height: 50px; width: 50px; background-color: #FFFFFF; background-image: url(\'/assets/1_center_blank.png\')">&nbsp;</td>';
+
                   default:
-                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-open" style="height: 50px; width: 50px; background-color: #FFFFFF;">&nbsp;</td>';
+                      tableString += '<td data-x="' + col + '" data-y="' + row + '" id="cell-' + row + '-' + col++ + '" class="game-open game-open-' + r + '" style="height: 50px; width: 50px; background-color: #FFFFFF;">&nbsp;</td>';
                       break;
               }
           });
@@ -39,6 +41,17 @@ playing game <%= @game.id %>
 
       $('.game-map').html(tableString);
       player_tile = $("#" + player_tile);
+      $('.game-open-1').css('background-image', 'url("/assets/1_center_blank.png")');
+      $('.game-open-2').css('background-image', 'url("/assets/2_North_wall.png")');
+      $('.game-open-3').css('background-image', 'url("/assets/3_East_wall.png")');
+      $('.game-open-4').css('background-image', 'url("/assets/4_South_wall.png")');
+      $('.game-open-5').css('background-image', 'url("/assets/5_West_wall.png")');
+      $('.game-open-6').css('background-image', 'url("/assets/6_NorthWest_corner.png")');
+      $('.game-open-7').css('background-image', 'url("/assets/7_NorthEast_corner.png")');
+      $('.game-open-8').css('background-image', 'url("/assets/8_SouthEast_corner.png")');
+      $('.game-open-9').css('background-image', 'url("/assets/9_SouthWest_corner.png")');
+      $('.game-open').css('background-repeat', 'no-repeat');
+      $('.game-open').css('background-size', '100% 100%');
 
 
         $('td').click(function(){
@@ -47,7 +60,7 @@ playing game <%= @game.id %>
               if(player_tile != '')
                 player_tile.text('');
               player_tile = $(this);
-              player_tile.text("PLAYER");
+              player_tile.text("P");
           }
           console.log($(this).attr('id'));
       });
