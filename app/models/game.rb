@@ -48,52 +48,52 @@ class Game < ApplicationRecord
 
         potential_room_x = rand(max_width)
         potential_room_y = rand(max_height)
-        if potential_room_x - 3 < 0 or potential_room_y - 3 < 0 or potential_room_x + 3 >= max_width or potential_room_y + 3 >= max_height
+        if potential_room_x - 2 < 0 or potential_room_y - 2 < 0 or potential_room_x + 3 >= max_width or potential_room_y + 1 >= max_height
           next
         end
 
         valid = true
-        for x in (potential_room_x - 2)..(potential_room_x + 2)
-          for y in (potential_room_y - 2)..(potential_room_y + 2)
-            if new_map[y][x] == 1 or new_map[y][x] == 2
-              valid = false
-              break
-            end
-          end
-          unless valid
-            break
-          end
-        end
+        # for x in (potential_room_x - 2)..(potential_room_x + 2)
+        #   for y in (potential_room_y - 2)..(potential_room_y + 2)
+        #     if new_map[y][x] == 1 or new_map[y][x] == 2
+        #       valid = false
+        #       break
+        #     end
+        #   end
+        #   unless valid
+        #     break
+        #   end
+        # end
         unless valid
           next
         end
 
-        for x in (potential_room_x - 3)..(potential_room_x + 3)
-          for y in (potential_room_y - 3)..(potential_room_y + 3)
-            if x == potential_room_x - 3 and y == potential_room_y - 3
+        for x in (potential_room_x - 2)..(potential_room_x + 3)
+          for y in (potential_room_y - 2)..(potential_room_y + 1)
+            if x == potential_room_x - 2 and y == potential_room_y - 2
               new_map[y][x] = 6
               potential_doors = potential_doors.merge({potential_doors.length => {'x' => x, 'y' => y}})
-            elsif x == potential_room_x - 3 and y == potential_room_y + 3
+            elsif x == potential_room_x - 2 and y == potential_room_y + 1
               new_map[y][x] = 9
               potential_doors = potential_doors.merge({potential_doors.length => {'x' => x, 'y' => y}})
-            elsif x == potential_room_x + 3 and y == potential_room_y - 3
+            elsif x == potential_room_x + 3 and y == potential_room_y - 2
               new_map[y][x] = 7
               potential_doors = potential_doors.merge({potential_doors.length => {'x' => x, 'y' => y}})
-            elsif x == potential_room_x + 3 and y == potential_room_y + 3
+            elsif x == potential_room_x + 3 and y == potential_room_y + 1
               new_map[y][x] = 8
               potential_doors = potential_doors.merge({potential_doors.length => {'x' => x, 'y' => y}})
-            elsif x == potential_room_x - 3
+            elsif x == potential_room_x - 2
               new_map[y][x] = 5
               potential_doors = potential_doors.merge({potential_doors.length => {'x' => x, 'y' => y}})
-            elsif y == potential_room_y - 3
+            elsif y == potential_room_y - 2
               new_map[y][x] = 2
               potential_doors = potential_doors.merge({potential_doors.length => {'x' => x, 'y' => y}})
             elsif x == potential_room_x + 3
               new_map[y][x] = 3
               potential_doors = potential_doors.merge({potential_doors.length => {'x' => x, 'y' => y}})
-            elsif y == potential_room_y + 3
+            elsif y == potential_room_y + 1
               new_map[y][x] = 4
-              potential_doors = potential_doors.merge({potential_doors.length => {'x' => x, 'y' => y}})
+              #potential_doors = potential_doors.merge({potential_doors.length => {'x' => x, 'y' => y}})
             else
               new_map[y][x] = 1
             end
@@ -107,7 +107,7 @@ class Game < ApplicationRecord
           end
         end
         if room_count_lg == 0
-          new_map[potential_room_y][potential_room_x] = 'p'
+          new_map[potential_room_y + 1][potential_room_x] = 'p'
           starting_room_x = potential_room_x
           starting_room_y = potential_room_y
         end
@@ -460,7 +460,7 @@ puts "REMOVED"
 
       end
 
-      if attempts < 300
+      if attempts < 300 and potential_doors.length > 0
         valid_loop = true
       end
 
